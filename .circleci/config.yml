@@ -11,25 +11,49 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install Clippy
-          command: rustup component add clippy
-      - run:
-          name: Run Clippy
-          command: cargo clippy --all-targets --all-features -- -D warnings
-      - run:
-          name: Run Format
+          name: Run cargo format
           command: cargo fmt -- --check
+      - run:
+          name: Install cargo audit
+          command: cargo install cargo-audit --locked
+      - run:
+          name: Run cargo audit
+          command: cargo audit
+      - run:
+          name: Install cargo machete
+          command: cargo install cargo-machete --locked
+      - run:
+          name: Run cargo machete
+          command: cargo machete
+      - run:
+          name: Install cargo deny
+          command: cargo install cargo-deny --locked
+      - run:
+          name: Run cargo deny
+          command: cargo deny check
   build:
     executor: rust-executor
     steps:
       - checkout
       - run:
-          name: Build (debug)
+          name: Run cargo build
           command: cargo build
       - persist_to_workspace:
           root: target
           paths:
             - debug
+  clippy:
+    executor: rust-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: target
+      - run:
+          name: Install clippy
+          command: rustup component add clippy
+      - run:
+          name: Run clippy
+          command: cargo clippy --all-targets --all-features -- -D warnings
   test:
     executor: rust-executor
     steps:
@@ -37,7 +61,7 @@ jobs:
       - attach_workspace:
           at: target
       - run:
-          name: Run Tests
+          name: Run cargo test
           command: cargo test --all-features
 
 workflows:
@@ -47,6 +71,9 @@ workflows:
       - build:
           requires:
             - check
+      - clippy:
+          requires:
+            - build
       - test:
           requires:
             - build
