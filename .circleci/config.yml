@@ -1,9 +1,13 @@
 version: 2.1
 
-jobs:
-  check:
+executors:
+  rust-executor:
     docker:
       - image: cimg/rust:1.92
+
+jobs:
+  check:
+    executor: rust-executor
     steps:
       - checkout
       - run:
@@ -15,26 +19,34 @@ jobs:
       - run:
           name: Run Format
           command: cargo fmt -- --check
-  test:
-    docker:
-      - image: cimg/rust:1.92
+  build:
+    executor: rust-executor
     steps:
       - checkout
+      - run:
+          name: Build (debug)
+          command: cargo build
+      - persist_to_workspace:
+          root: target
+          paths:
+            - debug
+  test:
+    executor: rust-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: target
       - run:
           name: Run Tests
           command: cargo test --all-features
-  build:
-    docker:
-      - image: cimg/rust:1.92
-    steps:
-      - checkout
-      - run:
-          name: Build Project
-          command: cargo build --release
 
 workflows:
   production:
     jobs:
       - check
-      - test
-      - build
+      - build:
+          requires:
+            - check
+      - test:
+          requires:
+            - build
