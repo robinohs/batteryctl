@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  clippy:
+  check:
     docker:
       - image: cimg/rust:1.92
     steps:
@@ -35,6 +35,6 @@ jobs:
 workflows:
   production:
     jobs:
-      - clippy
+      - check
       - test
       - build
