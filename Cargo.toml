@@ -9,6 +9,13 @@ repository = "github.com/robinohs/batteryctl"
 keywords = ["battery", "monitoring", "cli", "rust"]
 categories = ["command-line-utilities", "system-monitoring"]
 readme = "README.md"
+exclude = [
+    "/.circleci/*",
+    ".vscode/*",
+    "install.sh",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
+]
 
 [dependencies]
 battery = { git = "https://github.com/robinohs/rust-battery" }
