@@ -19,7 +19,7 @@ exclude = [
 
 [dependencies]
 battery = { git = "https://github.com/robinohs/rust-battery" }
-carbond-lib = "0.3.0"
+carbond-lib = "0.3.1"
 clap = { version = "4.5.54", features = ["derive"] }
 color-eyre = "0.6.5"
 colored = "3.0.0"
